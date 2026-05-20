@@ -9,9 +9,9 @@ import {
   APP_VERSION,
   DEFAULT_CUE_SET_VERSION,
   DEFAULT_HEA_CREATOR_ID,
-  DEFAULT_HEA_ENDPOINT,
   DEFAULT_HEA_ID,
   DEFAULT_REACHY_SDK_MODULE_URL,
+  getDefaultHeaEndpoint,
   makeDefaultId,
 } from "./config.js";
 import { streamReachyChat } from "./api/heaReachyClient.js";
@@ -47,7 +47,7 @@ const motionExecutor = new MotionExecutor({
 init();
 
 function init() {
-  ui.endpoint.value = DEFAULT_HEA_ENDPOINT;
+  ui.endpoint.value = getDefaultHeaEndpoint();
   ui.creatorId.value = DEFAULT_HEA_CREATOR_ID;
   ui.heaId.value = DEFAULT_HEA_ID;
   ui.sdkModuleUrl.value = DEFAULT_REACHY_SDK_MODULE_URL;
@@ -57,6 +57,12 @@ function init() {
   ui.connectButton.addEventListener("click", handleConnect);
   ui.stopButton.addEventListener("click", handleStop);
   ui.chatForm.addEventListener("submit", handleSubmit);
+  ui.promptButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      ui.userText.value = button.dataset.prompt || "";
+      ui.userText.focus();
+    });
+  });
   ui.behaviorProfile.addEventListener("change", () => {
     motionExecutor.setBehaviorProfile(ui.behaviorProfile.value);
     appendLog(ui, "profile", ui.behaviorProfile.value);
@@ -189,12 +195,18 @@ function handleStop() {
 }
 
 function buildPayload() {
+  const visitorId = ensureFieldValue(ui.visitorId, "reachy_visitor");
+  const sessionId = ensureFieldValue(ui.sessionId, "reachy_session");
   const payload = {
     install_id: emptyToUndefined(ui.installId.value),
     creator_id: emptyToUndefined(ui.creatorId.value),
     hea_id: emptyToUndefined(ui.heaId.value),
-    visitorID: ui.visitorId.value,
-    session_id: ui.sessionId.value,
+    visitorID: visitorId,
+    visitor_id: visitorId,
+    visitorId,
+    session_id: sessionId,
+    sessionID: sessionId,
+    sessionId,
     message: ui.userText.value,
     user_text: ui.userText.value,
     channel: "reachy_mini",
@@ -205,6 +217,17 @@ function buildPayload() {
   };
 
   return Object.fromEntries(Object.entries(payload).filter(([, value]) => value !== undefined));
+}
+
+function ensureFieldValue(input, prefix) {
+  const existing = emptyToUndefined(input?.value);
+  if (existing) return existing;
+
+  const generated = makeDefaultId(prefix);
+  if (input) {
+    input.value = generated;
+  }
+  return generated;
 }
 
 function emptyToUndefined(value) {

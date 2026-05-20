@@ -25,6 +25,7 @@ export function getUi() {
     mockPose: document.querySelector("#mock-pose"),
     mockStage: document.querySelector("#mock-stage"),
     previewCue: document.querySelector("#preview-cue"),
+    promptButtons: document.querySelectorAll("[data-prompt]"),
     reachyVideo: document.querySelector("#reachy-video"),
     robotId: document.querySelector("#robot-id"),
     robotMode: document.querySelector("#robot-mode"),

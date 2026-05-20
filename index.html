@@ -15,34 +15,102 @@ This file is intended to be extracted into a separate open-source repository.
   <body>
     <main class="app-shell" aria-labelledby="app-title">
       <section class="workspace">
-        <header class="topbar">
-          <div>
-            <p class="eyebrow">HEA-World prototype</p>
-            <h1 id="app-title">Reachy Mini Channel</h1>
+        <header class="hero">
+          <div class="hero-nav">
+            <a class="brand-link" href="https://hea-world.com/" aria-label="Open HEA-World home page">
+              <span class="brand-mark">HEA</span>
+              <span>HEA-World</span>
+            </a>
+            <div class="status-strip" aria-live="polite">
+              <span id="connection-status" class="status-dot" data-state="idle"></span>
+              <span id="connection-label">Mock ready</span>
+            </div>
           </div>
-          <div class="status-strip" aria-live="polite">
-            <span id="connection-status" class="status-dot" data-state="idle"></span>
-            <span id="connection-label">Mock ready</span>
+
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <p class="eyebrow">Reachy Mini Channel Prototype</p>
+              <h1 id="app-title">Give your HEA a physical presence 🤖</h1>
+              <p class="hero-lede">One HEA. Multiple channels.</p>
+              <p class="hero-sublede">Grounded AI + safe local robot behaviors.</p>
+
+              <ol class="flow-steps" aria-label="Prototype flow">
+                <li><span>1</span>Connect Reachy</li>
+                <li><span>2</span>Ask your HEA</li>
+                <li><span>3</span>Watch the robot react</li>
+              </ol>
+            </div>
+
+            <section class="robot-showcase" aria-labelledby="robot-title">
+              <div class="section-heading">
+                <p class="section-kicker">Live preview</p>
+                <h2 id="robot-title">Robot presence</h2>
+              </div>
+
+              <div class="video-frame">
+                <video id="reachy-video" autoplay muted playsinline></video>
+                <div id="mock-stage" class="mock-stage" aria-live="polite">
+                  <div id="mock-robot" class="mock-robot" data-cue="idle" aria-hidden="true">
+                    <span class="mock-antenna mock-antenna-left"></span>
+                    <span class="mock-antenna mock-antenna-right"></span>
+                    <div class="mock-head">
+                      <span class="mock-eye mock-eye-left"><span></span></span>
+                      <span class="mock-eye mock-eye-right"><span></span></span>
+                      <span class="mock-mouth"></span>
+                    </div>
+                    <span class="mock-neck"></span>
+                  </div>
+                  <div class="preview-status">
+                    <p id="preview-cue">Idle expression preview</p>
+                    <p id="mock-pose">Head 0 / 0 / 0 - Antennas 0 / 0 - Body 0</p>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </header>
 
         <div class="control-grid">
+          <section class="panel panel-robot" aria-labelledby="connect-title">
+            <div class="section-heading">
+              <p class="section-kicker">Step 1</p>
+              <h2 id="connect-title">Connect Reachy</h2>
+            </div>
+
+            <div class="split">
+              <label>
+                <span>Robot mode</span>
+                <select id="robot-mode">
+                  <option value="mock">Mock robot</option>
+                  <option value="reachy">Reachy SDK</option>
+                </select>
+              </label>
+              <label>
+                <span>Behavior profile</span>
+                <select id="behavior-profile">
+                  <option value="default">Default</option>
+                  <option value="calm">Calm</option>
+                  <option value="showroom">Showroom</option>
+                  <option value="reduced_motion">Reduced motion</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="button-row">
+              <button id="connect-button" type="button">Connect Reachy</button>
+              <button id="stop-button" class="secondary" type="button">Safe stop</button>
+            </div>
+          </section>
+
           <section class="panel panel-config" aria-labelledby="config-title">
-            <h2 id="config-title">Session</h2>
+            <div class="section-heading">
+              <p class="section-kicker">HEA identity</p>
+              <h2 id="config-title">Ask HEAGuide by default</h2>
+            </div>
 
             <label class="toggle-row">
               <input id="mock-api" type="checkbox" checked>
-              <span>Mock HEA API</span>
-            </label>
-
-            <label>
-              <span>HEA endpoint</span>
-              <input id="endpoint" type="text" value="/api/reachymini/chat" autocomplete="off">
-            </label>
-
-            <label>
-              <span>Install ID</span>
-              <input id="install-id" type="text" placeholder="install_..." autocomplete="off">
+              <span>Use mock HEA answer</span>
             </label>
 
             <div class="split">
@@ -55,78 +123,20 @@ This file is intended to be extracted into a separate open-source repository.
                 <input id="hea-id" type="text" value="heaguide-web-001" placeholder="hea id" autocomplete="off">
               </label>
             </div>
-
-            <div class="split">
-              <label>
-                <span>Visitor ID</span>
-                <input id="visitor-id" type="text" autocomplete="off">
-              </label>
-              <label>
-                <span>Session ID</span>
-                <input id="session-id" type="text" autocomplete="off">
-              </label>
-            </div>
-
-            <label>
-              <span>Behavior profile</span>
-              <select id="behavior-profile">
-                <option value="default">Default</option>
-                <option value="calm">Calm</option>
-                <option value="showroom">Showroom</option>
-                <option value="reduced_motion">Reduced motion</option>
-              </select>
-            </label>
-          </section>
-
-          <section class="panel panel-robot" aria-labelledby="robot-title">
-            <h2 id="robot-title">Robot</h2>
-
-            <label>
-              <span>Robot mode</span>
-              <select id="robot-mode">
-                <option value="mock">Mock robot</option>
-                <option value="reachy">Reachy SDK</option>
-              </select>
-            </label>
-
-            <label>
-              <span>Reachy SDK module</span>
-              <input id="sdk-module-url" type="url" autocomplete="off">
-            </label>
-
-            <label>
-              <span>Robot ID</span>
-              <input id="robot-id" type="text" placeholder="auto-select first robot" autocomplete="off">
-            </label>
-
-            <div class="button-row">
-              <button id="connect-button" type="button">Connect</button>
-              <button id="stop-button" class="secondary" type="button">Stop</button>
-            </div>
-
-            <div class="video-frame">
-              <video id="reachy-video" autoplay muted playsinline></video>
-              <div id="mock-stage" class="mock-stage" aria-live="polite">
-                <div id="mock-robot" class="mock-robot" data-cue="idle" aria-hidden="true">
-                  <span class="mock-antenna mock-antenna-left"></span>
-                  <span class="mock-antenna mock-antenna-right"></span>
-                  <div class="mock-head">
-                    <span class="mock-eye mock-eye-left"><span></span></span>
-                    <span class="mock-eye mock-eye-right"><span></span></span>
-                    <span class="mock-mouth"></span>
-                  </div>
-                  <span class="mock-neck"></span>
-                </div>
-                <div class="preview-status">
-                  <p id="preview-cue">Idle expression preview</p>
-                  <p id="mock-pose">Head 0 / 0 / 0 - Antennas 0 / 0 - Body 0</p>
-                </div>
-              </div>
-            </div>
           </section>
 
           <section class="panel panel-chat" aria-labelledby="chat-title">
-            <h2 id="chat-title">Conversation</h2>
+            <div class="section-heading">
+              <p class="section-kicker">Step 2</p>
+              <h2 id="chat-title">Ask your HEA</h2>
+            </div>
+
+            <div class="prompt-buttons" aria-label="Example prompts">
+              <button class="prompt-chip" type="button" data-prompt="Introduce HEA-World in a warm and simple way.">Introduce HEA-World</button>
+              <button class="prompt-chip" type="button" data-prompt="Welcome a visitor to the HEA-World booth and explain what they can try.">Welcome a visitor</button>
+              <button class="prompt-chip" type="button" data-prompt="Explain solar energy simply for someone visiting a demo booth.">Explain solar energy simply</button>
+            </div>
+
             <form id="chat-form">
               <label>
                 <span>Visitor says</span>
@@ -138,14 +148,47 @@ This file is intended to be extracted into a separate open-source repository.
           </section>
 
           <section class="panel panel-cues" aria-labelledby="cues-title">
-            <h2 id="cues-title">Cue Plan</h2>
+            <div class="section-heading">
+              <p class="section-kicker">Step 3</p>
+              <h2 id="cues-title">Embodied Reactions</h2>
+            </div>
             <ol id="cue-list" class="cue-list"></ol>
           </section>
 
-          <section class="panel panel-log" aria-labelledby="log-title">
-            <h2 id="log-title">Events</h2>
+          <details class="panel advanced-panel">
+            <summary>Advanced settings</summary>
+            <div class="advanced-grid">
+              <label>
+                <span>HEA endpoint</span>
+                <input id="endpoint" type="text" value="/api/reachymini/chat" autocomplete="off">
+              </label>
+              <label>
+                <span>Install ID</span>
+                <input id="install-id" type="text" placeholder="install_..." autocomplete="off">
+              </label>
+              <label>
+                <span>Visitor ID</span>
+                <input id="visitor-id" type="text" autocomplete="off">
+              </label>
+              <label>
+                <span>Session ID</span>
+                <input id="session-id" type="text" autocomplete="off">
+              </label>
+              <label>
+                <span>Reachy SDK module</span>
+                <input id="sdk-module-url" type="url" autocomplete="off">
+              </label>
+              <label>
+                <span>Robot ID</span>
+                <input id="robot-id" type="text" placeholder="auto-select first robot" autocomplete="off">
+              </label>
+            </div>
+          </details>
+
+          <details class="panel panel-log">
+            <summary>Developer console</summary>
             <ol id="event-log" class="event-log"></ol>
-          </section>
+          </details>
         </div>
       </section>
     </main>

@@ -61,7 +61,13 @@ expression preview, so a live API response can be inspected before a physical
 Reachy Mini is connected. The app now waits for sentence-ready events before
 rendering the visible answer, which is the same hook a real app would use to
 start TTS and movement together. Disable `Mock HEA API` to call the live
-`/api/reachymini/chat` route with the prefilled HEAGuide identity.
+HEA Reachy channel route with the prefilled HEAGuide identity. On HEA-World
+domains the app defaults to the same-origin `/api/reachymini/chat` route. On
+Hugging Face Spaces (`*.hf.space`) it defaults to:
+
+```text
+https://hea-world.com/api/reachymini/chat
+```
 
 Real Reachy Mini connection uses the official browser SDK import documented by
 Hugging Face:
@@ -98,7 +104,9 @@ For first tests:
 4. Press `Ask HEA`.
 
 When `/api/reachymini/chat` exists, disable `Mock HEA API` and point the
-endpoint field at the route.
+endpoint field at the route. In the Hugging Face Space version this should be
+an absolute HEA-World URL, because the Space itself is static and does not host
+the HEA API.
 
 ## API Contract Expected By The App
 

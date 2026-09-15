@@ -1,2 +1,0 @@
-[reachy_mini_apps]
-hea_reachy_mini = hea_reachy_mini.main:HeaReachyMini

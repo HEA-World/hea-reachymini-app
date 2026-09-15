@@ -6,7 +6,7 @@ colorTo: yellow
 sdk: static
 pinned: false
 license: mit
-short_description: Choose a public HEA and let Reachy speak with safe Pollen movements
+short_description: Public HEAs speaking safely through Reachy Mini Lite
 tags:
   - reachy_mini
   - reachy_mini_python_app
@@ -20,9 +20,9 @@ show its expression cues as emoji, and translate only physically allowlisted
 cues into recordings from Pollen Robotics' official Reachy Mini emotions
 library.
 
-This source is staged for direct publication as `v0.6.0-rc.1`. A clean install
-from the synchronized public Space and owner physical release-candidate test
-remain required before the app is promoted as a stable release.
+This source is published as the public `v0.6.0-rc.1` release candidate. A clean
+install from the synchronized public Space and owner physical release-candidate
+test remain required before the app is promoted as a stable release.
 
 ## What it does
 

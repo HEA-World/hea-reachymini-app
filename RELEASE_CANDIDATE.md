@@ -1,11 +1,20 @@
 # Store release candidate record
 
-status: Phase 4 public-RC source staged locally; no public push performed
+status: Phase 4 public-RC published to GitHub; Hugging Face sync and physical validation pending
 last_updated: 2026-09-15
 app_version: 0.6.0
 target_source: `https://github.com/HEA-World/hea-reachymini-app`
 target_space: `https://huggingface.co/spaces/HEA-World/hea-reachymini-app`
 release_tag: `v0.6.0-rc.1`
+
+## Public release attempt
+
+- GitHub release-candidate commit: `4d2fb37f713dae002ad70340478bc351086295bd`
+- GitHub sync run: `34974437000` (failed before Space mutation)
+- Failure: Hugging Face rejected `README.md` because `short_description` exceeded 60 characters.
+- Hygiene issue found during audit: generated `build/`, `*.egg-info`, and `__pycache__` files had been staged by the release checkout.
+- Repair: publish a normal follow-up commit that shortens the metadata, removes generated files, and expands `.gitignore`; do not rewrite public history.
+- Space remained on baseline `df9bfb88bf21bca8c0977f907b9f4880c4c4bf4c` after the failed run.
 
 ## Existing canonical release baseline
 
@@ -51,8 +60,8 @@ physical soak. These are not inferred from Phase 3 source checks.
 
 ## Rollback
 
-Before the RC push, retain the GitHub and Space baseline commits above and tag
-the prior GitHub state. If the Python package fails install or launch, revert
-the public GitHub release commit, allow `hub-sync` to restore the Space payload,
-then verify the Space HEAD and reinstall the last locally validated package.
-No HEA-World stored data is migrated.
+The prior GitHub state is retained on `static-prototype-archive`; the Space
+baseline is recorded above. If the Python package fails install or launch,
+revert the public GitHub release commits, allow `hub-sync` to restore the Space
+payload, then verify the Space HEAD and reinstall the last locally validated
+package. No HEA-World stored data is migrated.

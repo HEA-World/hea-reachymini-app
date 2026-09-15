@@ -12,6 +12,7 @@ from hea_reachy_mini.speech_executor import (
     SpeechExecutor,
     detect_sentence_language,
     normalize_language_code,
+    normalize_voice_profile,
 )
 
 
@@ -19,16 +20,18 @@ class FakeSynthesizer:
     def __init__(self, durations=(0.2,)):
         self.durations = list(durations)
         self.paths = []
+        self.voice_profiles = []
         self.prepared = False
 
     def prepare(self):
         self.prepared = True
 
-    def synthesize(self, text, *, language=None):
+    def synthesize(self, text, *, language=None, voice_profile="auto"):
         descriptor, path = tempfile.mkstemp(prefix="hea_reachy_speech_test_", suffix=".wav")
         os.write(descriptor, b"test audio")
         os.close(descriptor)
         self.paths.append(path)
+        self.voice_profiles.append(voice_profile)
         duration = self.durations.pop(0)
         return SpeechClip(
             path=path,
@@ -117,6 +120,44 @@ class SpeechExecutorTests(unittest.TestCase):
         self.assertEqual(detect_sentence_language("Bonjour, je peux vous aider avec cette question."), "fr")
         self.assertEqual(detect_sentence_language("Natürlich kann ich Ihnen gerne helfen."), "de")
         self.assertEqual(detect_sentence_language("Olá, posso ajudar com esta pergunta."), "pt")
+        self.assertEqual(normalize_voice_profile("FEMININE"), "feminine")
+        with self.assertRaises(SpeechError) as raised:
+            normalize_voice_profile("Xander")
+        self.assertEqual(raised.exception.code, "speech_voice_profile_invalid")
+
+    def test_voice_profile_selects_only_matching_installed_language_voice(self):
+        with tempfile.NamedTemporaryFile() as binary:
+            os.chmod(binary.name, 0o700)
+
+            def run_command(command, **kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout=(
+                        "Xander              nl_NL    # Hallo! Mijn naam is Xander.\n"
+                        "Ellen               nl_BE    # Hallo! Mijn naam is Ellen.\n"
+                        "Mónica              es_ES    # ¡Hola! Me llamo Mónica.\n"
+                        "Eddy (Spanish (Spain)) es_ES    # ¡Hola! Me llamo Eddy.\n"
+                        "Anna                de_DE    # Hallo! Ich heiße Anna.\n"
+                    ),
+                )
+
+            synthesizer = MacOSSaySynthesizer(
+                say_path=binary.name,
+                platform_name="darwin",
+                run_command=run_command,
+            )
+            synthesizer.prepare()
+
+            self.assertEqual(synthesizer.select_voice("nl", "masculine").name, "Xander")
+            self.assertEqual(synthesizer.select_voice("nl", "feminine").name, "Ellen")
+            self.assertEqual(synthesizer.select_voice("es", "masculine").name, "Eddy (Spanish (Spain))")
+            self.assertEqual(synthesizer.select_voice("es", "feminine").name, "Mónica")
+            with self.assertRaises(SpeechError) as raised:
+                synthesizer.select_voice("de", "masculine")
+            self.assertEqual(raised.exception.code, "speech_voice_profile_unavailable")
+            with self.assertRaises(SpeechError) as raised:
+                synthesizer.select_voice("fr", "feminine")
+            self.assertEqual(raised.exception.code, "speech_voice_unavailable")
 
     def test_known_language_without_installed_voice_fails_instead_of_using_english(self):
         with tempfile.NamedTemporaryFile() as binary:
@@ -157,6 +198,7 @@ class SpeechExecutorTests(unittest.TestCase):
             threading.Event(),
             lambda: motion_calls.append("ran") or "completed",
             language="en",
+            voice_profile="feminine",
         )
 
         self.assertEqual(result.speech_outcome, "spoken")
@@ -165,6 +207,7 @@ class SpeechExecutorTests(unittest.TestCase):
         self.assertEqual(result.voice, "Xander")
         self.assertEqual(motion_calls, ["ran"])
         self.assertEqual(len(robot.media.played), 1)
+        self.assertEqual(synthesizer.voice_profiles, ["feminine"])
         self.assertEqual(robot.media.stop_calls, 1)
         self.assertFalse(os.path.exists(synthesizer.paths[0]))
 

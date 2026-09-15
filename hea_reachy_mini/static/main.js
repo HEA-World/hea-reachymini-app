@@ -2,10 +2,11 @@ const ui = {
   form: document.querySelector("#ask-form"),
   question: document.querySelector("#question"),
   speakAnswer: document.querySelector("#speak-answer"),
+  voiceProfile: document.querySelector("#voice-profile"),
   ask: document.querySelector("#ask"),
   stop: document.querySelector("#stop"),
   resume: document.querySelector("#resume"),
-  answer: document.querySelector("#answer"),
+  chatTranscript: document.querySelector("#chat-transcript"),
   error: document.querySelector("#error"),
   cues: document.querySelector("#cues"),
   motionAllowlist: document.querySelector("#motion-allowlist"),
@@ -36,6 +37,9 @@ const ui = {
 let directoryItems = [];
 let directoryState = "not_loaded";
 let latestState = null;
+let activeChatTurn = null;
+let lastObservedAnswer = "";
+let lastSelectedHeaKey = "";
 
 const labels = {
   starting: "Starting",
@@ -63,11 +67,22 @@ const languageNames = {
 
 ui.form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  await request("/ask", { text: ui.question.value, speak: ui.speakAnswer.checked });
+  const text = String(ui.question.value || "").trim();
+  if (!text) return;
+  const turn = beginChatTurn(text);
+  const result = await request("/ask", {
+    text,
+    speak: ui.speakAnswer.checked,
+    voice_profile: ui.voiceProfile.value,
+  });
+  if (!result) markChatTurnFailed(turn);
 });
 
 ui.stop.addEventListener("click", () => request("/stop"));
 ui.resume.addEventListener("click", () => request("/resume"));
+ui.speakAnswer.addEventListener("change", () => {
+  ui.voiceProfile.disabled = !ui.speakAnswer.checked || Boolean(latestState?.busy) || Boolean(latestState?.stopped);
+});
 ui.exportDiagnostics.addEventListener("click", exportDiagnostics);
 ui.refreshHeas.addEventListener("click", async () => {
   await loadDirectory(true);
@@ -77,10 +92,11 @@ ui.heaPicker.addEventListener("change", async () => {
   const index = Number(ui.heaPicker.value);
   const selected = Number.isInteger(index) ? directoryItems[index] : null;
   if (!selected) return;
-  await request("/select-hea", {
+  const result = await request("/select-hea", {
     creator_id: selected.creator_id,
     hea_id: selected.hea_id,
   });
+  if (result?.changed) resetChat();
   await loadDirectory(false);
 });
 ui.cueCatalog.addEventListener("click", async (event) => {
@@ -108,10 +124,13 @@ async function request(path, body) {
       const payload = await response.json().catch(() => ({}));
       throw new Error(payload.detail || `Request failed (${response.status})`);
     }
+    const payload = await response.json().catch(() => ({}));
     await refresh();
+    return payload;
   } catch (error) {
     ui.error.textContent = error.message;
     ui.error.hidden = false;
+    return null;
   }
 }
 
@@ -151,6 +170,7 @@ function render(state) {
   ui.ask.disabled = state.busy || state.stopped || !state.robot_ready || !directoryReady || !hasSelection;
   ui.question.disabled = state.busy || state.stopped;
   ui.speakAnswer.disabled = state.busy || state.stopped || !state.speech?.available;
+  ui.voiceProfile.disabled = state.busy || state.stopped || !state.speech?.available || !ui.speakAnswer.checked;
   ui.stop.disabled = state.stopped;
   ui.resume.hidden = !state.stopped;
   ui.armMotion.disabled = state.busy || state.stopped || !state.robot_ready;
@@ -162,8 +182,7 @@ function render(state) {
   renderSelectedHea(state.selected_hea);
   if (state.directory?.status === "ready" && directoryState !== "ready") loadDirectory(false);
 
-  ui.answer.textContent = state.answer || "The answer will appear here.";
-  ui.answer.classList.toggle("empty", !state.answer);
+  renderChatState(state);
   ui.requestId.textContent = state.request_id ? `request ${state.request_id}` : "";
 
   if (state.error) {
@@ -319,6 +338,11 @@ function renderDirectoryOptions(selectedOverride) {
 
 function renderSelectedHea(selected) {
   const name = selected?.name || "Choose a public HEA";
+  const selectedKey = selected?.creator_id && selected?.hea_id
+    ? `${selected.creator_id}/${selected.hea_id}`
+    : "";
+  if (lastSelectedHeaKey && selectedKey !== lastSelectedHeaKey) resetChat();
+  lastSelectedHeaKey = selectedKey;
   ui.selectedHeaName.textContent = name;
   ui.askHeaName.textContent = name;
   ui.askButtonHeaName.textContent = name;
@@ -335,6 +359,79 @@ function renderSelectedHea(selected) {
     ui.selectedHeaAvatar.alt = "";
     ui.selectedHeaAvatar.hidden = true;
   }
+}
+
+function beginChatTurn(text) {
+  ui.chatTranscript.querySelector(".chat-empty")?.remove();
+  const userBubble = chatBubble("user", "You", text);
+  const assistantBubble = chatBubble("assistant", latestState?.selected_hea?.name || "HEA", "Thinking…");
+  assistantBubble.querySelector(".chat-message").classList.add("pending");
+  ui.chatTranscript.append(userBubble, assistantBubble);
+  activeChatTurn = assistantBubble;
+  lastObservedAnswer = "";
+  ui.chatTranscript.scrollTop = ui.chatTranscript.scrollHeight;
+  return assistantBubble;
+}
+
+function chatBubble(role, speaker, text) {
+  const row = document.createElement("div");
+  row.className = `chat-row ${role}`;
+  const bubble = document.createElement("div");
+  bubble.className = "chat-bubble";
+  const label = document.createElement("span");
+  label.className = "chat-speaker";
+  label.textContent = speaker;
+  const message = document.createElement("div");
+  message.className = "chat-message";
+  message.textContent = text;
+  bubble.append(label, message);
+  row.append(bubble);
+  return row;
+}
+
+function markChatTurnFailed(turn) {
+  if (!turn) return;
+  const message = turn.querySelector(".chat-message");
+  message.classList.remove("pending");
+  message.textContent = "This message could not be sent.";
+  activeChatTurn = null;
+}
+
+function renderChatState(state) {
+  const answer = String(state.answer || "");
+  if (activeChatTurn) {
+    const message = activeChatTurn.querySelector(".chat-message");
+    if (answer) {
+      message.textContent = answer;
+      message.classList.remove("pending");
+    } else if (state.status === "stopped") {
+      message.textContent = "Stopped.";
+      message.classList.remove("pending");
+    } else if (state.status === "error") {
+      message.textContent = "The HEA could not complete this answer.";
+      message.classList.remove("pending");
+    }
+    if (!state.busy && ["complete", "error", "stopped"].includes(state.status)) {
+      activeChatTurn = null;
+    }
+  } else if (answer && answer !== lastObservedAnswer) {
+    ui.chatTranscript.querySelector(".chat-empty")?.remove();
+    ui.chatTranscript.append(chatBubble("assistant", state.selected_hea?.name || "HEA", answer));
+  }
+  if (answer !== lastObservedAnswer) {
+    lastObservedAnswer = answer;
+    ui.chatTranscript.scrollTop = ui.chatTranscript.scrollHeight;
+  }
+}
+
+function resetChat() {
+  ui.chatTranscript.replaceChildren();
+  const empty = document.createElement("div");
+  empty.className = "chat-empty";
+  empty.textContent = "Start a fresh conversation with this HEA.";
+  ui.chatTranscript.append(empty);
+  activeChatTurn = null;
+  lastObservedAnswer = "";
 }
 
 function renderCueCatalog(state) {

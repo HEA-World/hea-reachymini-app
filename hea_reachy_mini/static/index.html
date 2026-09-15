@@ -38,31 +38,40 @@
       <p class="safety">Only HEAs listed in HEA-World's read-only public directory can be selected. Changing HEAs starts a fresh conversation so context never crosses between agents.</p>
     </section>
 
-    <section class="card ask-card">
+    <section class="card chat-card">
+      <div class="section-title"><h2>Chat with <span id="ask-hea-name">your selected HEA</span></h2><span id="request-id"></span></div>
+      <div id="chat-transcript" class="chat-transcript" aria-live="polite">
+        <div class="chat-empty">Your conversation will appear here.</div>
+      </div>
       <form id="ask-form">
-        <label for="question">Ask <span id="ask-hea-name">your selected HEA</span></label>
-        <textarea id="question" maxlength="6000" rows="4" required>What is HEA-World, in one friendly sentence?</textarea>
-        <label class="speech-toggle" for="speak-answer">
-          <input id="speak-answer" type="checkbox" checked>
-          Speak completed sentences through Reachy's speaker
-        </label>
+        <label class="sr-only" for="question">Your message</label>
+        <textarea id="question" maxlength="6000" rows="4" required>What do you do?</textarea>
+        <div class="composer-options">
+          <label class="speech-toggle" for="speak-answer">
+            <input id="speak-answer" type="checkbox" checked>
+            Speak through Reachy
+          </label>
+          <label class="voice-profile" for="voice-profile">
+            Voice preference
+            <select id="voice-profile">
+              <option value="auto" selected>Automatic</option>
+              <option value="masculine">Masculine</option>
+              <option value="feminine">Feminine</option>
+            </select>
+          </label>
+        </div>
         <div class="actions">
           <button id="ask" type="submit">Ask <span id="ask-button-hea-name">selected HEA</span></button>
           <button id="stop" class="danger" type="button">Stop &amp; neutral</button>
           <button id="resume" class="secondary" type="button" hidden>Resume</button>
         </div>
       </form>
-      <p class="safety">Reachy selects an installed Mac voice for each answer sentence's language. Stop cancels speech and the active official recording through the Reachy SDK, then returns the robot to neutral. If a matching local voice is unavailable, the visible answer and safe expression path continue.</p>
-    </section>
-
-    <section class="card" aria-live="polite">
-      <div class="section-title"><h2>Answer</h2><span id="request-id"></span></div>
-      <div id="answer" class="answer empty">The answer will appear here.</div>
+      <p class="safety">Reachy first resolves each sentence's language, then applies the selected voice preference only within installed voices for that language. If no matching local voice is available, the visible chat and safe expression path continue. Stop cancels speech and motion, then returns Reachy to neutral.</p>
       <div id="error" class="error" hidden></div>
     </section>
 
     <section class="card">
-      <div class="section-title"><h2>Sentences in this answer</h2><span>voice + emoji · max 1 safe move / 2 sentences</span></div>
+      <div class="section-title"><h2>Last answer details</h2><span>voice + emoji · max 1 safe move / 2 sentences</span></div>
       <ul id="cues" class="cues"><li class="muted">No expression cue yet.</li></ul>
       <p class="motion-label">Current supervised-lab movement allowlist</p>
       <div id="motion-allowlist" class="move-key"><span>Loading local catalog…</span></div>

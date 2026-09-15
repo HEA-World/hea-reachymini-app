@@ -44,13 +44,14 @@ Phase 2c public HEA directory picker:
 
 1. Read only the filtered production `hea_directory.json` already used by the website catalog; add no API, secret, login, pairing, or directory write.
 2. Bound the response to 2 MB / 1,000 rows, validate exact ids and bounded display fields, accept only HTTPS avatars, deduplicate exact creator/HEA pairs, and fail closed if no valid entry remains.
-3. Select HEAGuide initially only when its exact identity is present. The live 2026-09-15 directory does not contain it, so require an explicit choice rather than bypassing the public list. Expose a search + select control, never free-form identity fields.
+3. Select HEA World (`hea-world/heaguide-web-001`) initially only when its exact identity is present. The live 2026-09-15 directory does not contain it, so require an explicit choice rather than bypassing the public list. Expose a search + select control, never free-form identity fields.
 4. Capture the selected public identity into each queued turn, reject selection/refresh while a turn is active, and disable Ask unless the current selection still belongs to a ready directory snapshot.
 5. Reset both visitor and session identity after a real selection change or when the selected HEA disappears, so conversation context cannot cross HEAs.
 6. Show structured retryable directory failure without logging the directory body or user text. Preserve the existing local speech, cue, motion, and Stop gates unchanged.
-7. Validate two distinct public selections and context isolation through deterministic tests; owner E6 on the physical app remains required before Store Package S publication.
+7. Use the neutral starter `What do you do?` for every selected HEA, with no HEA World-specific wording.
+8. Validate two distinct public selections and context isolation through deterministic tests; owner E6 on the physical app remains required before Store Package S publication.
 
-Source steps 1–7 are implemented in app 0.5.0. Public-directory E5 passed with 48 validated entries (the legacy HEAGuide default is absent), the official app checker passed, and 0.5.0 is installed in Reachy Mini Control without being launched. Owner physical two-HEA E6 remains open.
+Source steps 1–8 are implemented. Public-directory E5 passed with 48 validated entries (the preferred HEA World identity is absent), the official app checker passed, and the public RC is installed in Reachy Mini Control. Owner physical two-HEA E6 remains open.
 
 Phase 3 store-source hardening:
 
@@ -62,4 +63,6 @@ Phase 3 store-source hardening:
 6. Replace the placeholder Space landing page with hero media, four use steps, requirements, safety/privacy, known limits, and source/support links.
 7. Prove source/package metadata, secrets boundary, unit behavior, and official clean install/entry-point/uninstall before requesting Phase 4.
 
-Source steps 1–7 are complete in app 0.6.0. The reviewed manifest contains 39 files; native tests pass 65/65; the deterministic Phase 3 guardrail passes; and the official assistant passes a fresh temporary install, entry-point check, and uninstall. Phase 4 publishes `v0.6.0-rc.1` through the existing GitHub-to-Hugging-Face sync, then performs the physical RC gate in public because the owner confirms there is no meaningful current traffic. The first GitHub attempt failed before Space mutation on invalid README metadata and exposed generated-file staging; the follow-up release must match the manifest exactly and prove the synchronized Space before installation.
+Source steps 1–7 are complete in app 0.6.0. The reviewed manifest contains 39 files; native tests pass 65/65; the deterministic Phase 3 guardrail passes; and the official assistant passes a fresh temporary install, entry-point check, and uninstall. The live `v0.6.0-rc.1` was published through the existing GitHub-to-Hugging-Face sync after a metadata/generated-file repair. App 0.6.1 / `v0.6.1-rc.2` prepares the approved browser-memory chat, last-answer audit, neutral starter, conditional HEA World default, matching-language voice-character preference, and truthful public-page copy. It must again match the manifest exactly, synchronize through GitHub, and pass a catalog-installed update plus owner physical E6 before being called released.
+
+Release mirroring is policy-driven: after any manifest-listed source change, update the recorded publish-tree digest and run `npm run reachy:sync-public-repo`, then require `npm run test:reachy-public-repo-sync` before committing the separate public checkout. The command refuses an unexpected Git remote or dirty target and verifies that all 39 application files match byte-for-byte while preserving the public repository's GitHub workflow.

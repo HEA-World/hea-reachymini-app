@@ -1,11 +1,11 @@
 # Store release candidate record
 
-status: Phase 4 public RC live on Hugging Face; catalog installation and owner physical validation pending
+status: app 0.6.1 RC refinement staged locally; public 0.6.0 RC remains live; catalog update and owner physical validation pending
 last_updated: 2026-09-15
-app_version: 0.6.0
+app_version: 0.6.1
 target_source: `https://github.com/HEA-World/hea-reachymini-app`
 target_space: `https://huggingface.co/spaces/HEA-World/hea-reachymini-app`
-release_tag: `v0.6.0-rc.1`
+release_tag: `v0.6.1-rc.2`
 
 ## Public release attempt
 
@@ -21,6 +21,7 @@ release_tag: `v0.6.0-rc.1`
 - Payload verification: all 38 Space application files match the reviewed manifest byte-for-byte; hub-sync omits GitHub `.gitignore` and supplies Space `.gitattributes`.
 - Official checker against the synchronized Space clone: metadata, clean temporary install, entry-point registration, uninstall — PASS.
 - Still open: installation from Reachy Mini Control's public catalog and owner physical E6.
+- Follow-up RC source: app 0.6.1 adds a browser-memory chat transcript, separate last-answer audit, HEA-neutral starter, conditional HEA World preference, and installed matching-language Automatic/Masculine/Feminine voice selection. It is not public until a separately verified GitHub commit and successful `hub-sync` replace the 0.6.0 RC.
 
 ## Existing canonical release baseline
 
@@ -44,8 +45,8 @@ stable-release claim.
 
 ## Frozen public beta contract
 
-The installer can choose only a directory-listed public HEA, type a question,
-hear sentence-level offline macOS speech, see any of 24 canonical emoji cues,
+The installer can choose only a directory-listed public HEA, use a local chat,
+hear sentence-level offline macOS speech with a bounded voice preference, see any of 24 canonical emoji cues,
 and receive at most one of four physically allowlisted official Pollen movement
 families per two sentences. There is no microphone, camera, credential, pairing,
 or private/shared/unlisted HEA access.

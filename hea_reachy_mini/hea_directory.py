@@ -53,7 +53,7 @@ def default_public_hea() -> PublicHea:
     return PublicHea(
         creator_id=HEA_CREATOR_ID,
         hea_id=HEA_ID,
-        name="HEAGuide",
+        name="HEA World",
         avatar_url="",
         beta=False,
     )

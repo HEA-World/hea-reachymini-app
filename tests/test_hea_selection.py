@@ -33,12 +33,13 @@ class HeaSelectionTests(unittest.TestCase):
         app.directory_client = FakeDirectoryClient(entries)
         return app
 
-    def test_selects_heaguide_by_default_only_when_the_exact_identity_is_public(self):
+    def test_selects_hea_world_by_default_only_when_the_exact_identity_is_public(self):
         app = self.make_app([default_public_hea()])
 
         self.assertTrue(app._refresh_directory())
 
         self.assertEqual(app.state.snapshot()["selected_hea"]["hea_id"], default_public_hea().hea_id)
+        self.assertEqual(app.state.snapshot()["selected_hea"]["name"], "HEA World")
 
         app = self.make_app([PublicHea("owner-public", "another-hea", "Another HEA", "", False)])
         self.assertTrue(app._refresh_directory())

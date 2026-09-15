@@ -36,7 +36,7 @@ class DiagnosticsTests(unittest.TestCase):
         payload = state.diagnostics_snapshot()
         serialized = json.dumps(payload, ensure_ascii=False)
 
-        self.assertEqual(payload["app_version"], "0.6.0")
+        self.assertEqual(payload["app_version"], "0.6.1")
         self.assertEqual(payload["selected_public_hea"]["hea_id"], "public-hea")
         self.assertEqual(payload["recent_sentence_outcomes"][0]["speech_language"], "nl")
         self.assertNotIn("ANSWER_SECRET_74A", serialized)
@@ -58,7 +58,7 @@ class DiagnosticsTests(unittest.TestCase):
             )
 
         payload = json.loads(output.getvalue())
-        self.assertEqual(payload["appVersion"], "0.6.0")
+        self.assertEqual(payload["appVersion"], "0.6.1")
         self.assertEqual(payload["requestId"], "invalid_identifier")
         self.assertEqual(payload["http"], 503)
         self.assertEqual(payload["sentenceIndex"], 2)

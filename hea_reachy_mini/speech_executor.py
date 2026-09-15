@@ -40,6 +40,15 @@ def normalize_language_code(value: object) -> str | None:
     return base_language if re.fullmatch(r"[a-z]{2,3}", base_language) else None
 
 
+def normalize_voice_profile(value: object) -> str:
+    """Return one supported local voice preference, never a voice name."""
+
+    normalized = str(value or "auto").strip().lower()
+    if normalized not in {"auto", "masculine", "feminine"}:
+        raise SpeechError("speech_voice_profile_invalid", "The local voice preference is invalid")
+    return normalized
+
+
 _LANGUAGE_MARKERS = {
     "en": frozenset({"the", "and", "you", "your", "this", "that", "with", "for", "hello", "thanks", "can", "help", "would", "please"}),
     "nl": frozenset({"de", "het", "een", "en", "van", "ik", "jij", "je", "uw", "dit", "dat", "met", "voor", "niet", "kan", "graag", "helpen", "vraag", "antwoord"}),
@@ -138,6 +147,24 @@ class MacOSSaySynthesizer:
         "es": ("Mónica",),
         "pt": ("Joana", "Luciana"),
     }
+    _PROFILE_VOICES = {
+        "masculine": {
+            "en": ("Daniel", "Albert", "Fred", "Ralph", "Aman", "Rishi"),
+            "nl": ("Xander",),
+            "fr": ("Thomas", "Jacques", "Eddy (French (France))", "Reed (French (Canada))"),
+            "de": ("Eddy (German (Germany))", "Reed (German (Germany))", "Rocko (German (Germany))"),
+            "es": ("Eddy (Spanish (Spain))", "Reed (Spanish (Spain))", "Rocko (Spanish (Spain))"),
+            "pt": ("Eddy (Portuguese (Brazil))", "Reed (Portuguese (Brazil))", "Rocko (Portuguese (Brazil))"),
+        },
+        "feminine": {
+            "en": ("Samantha", "Karen", "Kathy", "Moira", "Tessa", "Tara"),
+            "nl": ("Ellen",),
+            "fr": ("Amélie", "Flo (French (France))", "Sandy (French (France))", "Shelley (French (France))"),
+            "de": ("Anna", "Flo (German (Germany))", "Sandy (German (Germany))", "Shelley (German (Germany))"),
+            "es": ("Mónica", "Paulina", "Flo (Spanish (Spain))", "Sandy (Spanish (Spain))"),
+            "pt": ("Joana", "Luciana", "Flo (Portuguese (Brazil))", "Sandy (Portuguese (Brazil))"),
+        },
+    }
 
     def prepare(self) -> None:
         if self._platform_name != "darwin":
@@ -175,24 +202,40 @@ class MacOSSaySynthesizer:
             for language, voices in voices_by_language.items()
         }
 
-    def select_voice(self, language: str | None) -> MacOSVoice | None:
+    def select_voice(self, language: str | None, voice_profile: str = "auto") -> MacOSVoice | None:
         normalized = normalize_language_code(language)
         if normalized is None:
             return None
+        profile = normalize_voice_profile(voice_profile)
         candidates = self._voices_by_language.get(normalized, ())
         if not candidates:
             raise SpeechError(
                 "speech_voice_unavailable",
                 f"No installed macOS voice matches language {normalized}",
             )
-        preferred_names = self._PREFERRED_VOICES.get(normalized, ())
+        preferred_names = (
+            self._PREFERRED_VOICES.get(normalized, ())
+            if profile == "auto"
+            else self._PROFILE_VOICES[profile].get(normalized, ())
+        )
         for preferred_name in preferred_names:
             for candidate in candidates:
                 if candidate.name == preferred_name:
                     return candidate
+        if profile != "auto":
+            raise SpeechError(
+                "speech_voice_profile_unavailable",
+                f"No installed {profile} macOS voice matches language {normalized}",
+            )
         return candidates[0]
 
-    def synthesize(self, text: str, *, language: str | None = None) -> SpeechClip:
+    def synthesize(
+        self,
+        text: str,
+        *,
+        language: str | None = None,
+        voice_profile: str = "auto",
+    ) -> SpeechClip:
         normalized = re.sub(r"\s+", " ", str(text or "")).strip()
         if not normalized:
             raise SpeechError("speech_text_empty", "There is no sentence to speak")
@@ -202,7 +245,7 @@ class MacOSSaySynthesizer:
         descriptor, path = tempfile.mkstemp(prefix="hea_reachy_speech_", suffix=".wav")
         os.close(descriptor)
         try:
-            voice = self.select_voice(language)
+            voice = self.select_voice(language, voice_profile)
             command = [self._say_path]
             if voice is not None:
                 command.extend(["-v", voice.name])
@@ -329,6 +372,7 @@ class SpeechExecutor:
         stop_event: object,
         motion_callback: Callable[[], str],
         language: str | None = None,
+        voice_profile: str = "auto",
     ) -> SpeechPlaybackResult:
         with self._state_lock:
             if not self._available:
@@ -347,7 +391,11 @@ class SpeechExecutor:
             if resolved_language:
                 self._turn_language = resolved_language
 
-        clip = self._synthesizer.synthesize(text, language=resolved_language)
+        clip = self._synthesizer.synthesize(
+            text,
+            language=resolved_language,
+            voice_profile=normalize_voice_profile(voice_profile),
+        )
         with self._state_lock:
             if self._turn_seconds + clip.duration_seconds > self._max_turn_seconds:
                 clip.discard()

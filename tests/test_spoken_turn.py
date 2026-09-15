@@ -2,6 +2,8 @@ import threading
 import unittest
 from types import SimpleNamespace
 
+from pydantic import ValidationError
+
 from hea_reachy_mini.app_state import AppStateStore
 from hea_reachy_mini.cue_contract import CueGate
 from hea_reachy_mini.main import AskRequest, HeaReachyMini, TurnJob
@@ -46,8 +48,8 @@ class FakeSpeech:
     def begin_turn(self):
         self.begin_calls += 1
 
-    def speak_with_motion(self, robot, text, stop_event, motion_callback, language=None):
-        self.calls.append((text, language))
+    def speak_with_motion(self, robot, text, stop_event, motion_callback, language=None, voice_profile="auto"):
+        self.calls.append((text, language, voice_profile))
         if self.error is not None:
             raise self.error
         voices = {"nl": "Xander", "es": "Mónica", "en": "Daniel"}
@@ -83,7 +85,19 @@ class SpokenTurnTests(unittest.TestCase):
         return app
 
     def test_spoken_output_defaults_on_for_a_turn_request(self):
-        self.assertTrue(AskRequest(text="Hello Reachy.").speak)
+        request = AskRequest(text="Hello Reachy.")
+        self.assertTrue(request.speak)
+        self.assertEqual(request.voice_profile, "auto")
+        with self.assertRaises(ValidationError):
+            AskRequest(text="Hello Reachy.", voice_profile="Xander")
+
+    def test_turn_passes_bounded_voice_profile_to_every_sentence(self):
+        app = self.make_app([sentence_event(0, "Hola, puedo ayudar.", "helpful", "es")])
+        self.assertTrue(app.state.try_queue_turn())
+
+        app._run_turn(object(), threading.Event(), TurnJob("Question", True, voice_profile="feminine"))
+
+        self.assertEqual(app.speech.calls, [("Hola, puedo ayudar.", "es", "feminine")])
 
     def test_every_sentence_is_spoken_even_without_an_expression(self):
         app = self.make_app(
@@ -96,7 +110,7 @@ class SpokenTurnTests(unittest.TestCase):
 
         app._run_turn(object(), threading.Event(), TurnJob("Question", True))
 
-        self.assertEqual(app.speech.calls, [("This sentence has no cue.", None), ("Ik kan helpen.", "nl")])
+        self.assertEqual(app.speech.calls, [("This sentence has no cue.", None, "auto"), ("Ik kan helpen.", "nl", "auto")])
         self.assertEqual(app.motion.calls, [("helpful", 1)])
         self.assertEqual(app.motion.begin_calls, 1)
         sentences = app.state.snapshot()["cues"]
@@ -165,7 +179,7 @@ class SpokenTurnTests(unittest.TestCase):
 
         app._run_turn(object(), threading.Event(), TurnJob("Question", True))
 
-        self.assertEqual(app.speech.calls, [("Only once.", None)])
+        self.assertEqual(app.speech.calls, [("Only once.", None, "auto")])
         self.assertEqual(app.motion.calls, [("warm_smile", 0)])
         self.assertEqual(len(app.state.snapshot()["cues"]), 1)
 

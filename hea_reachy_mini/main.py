@@ -24,6 +24,7 @@ from .speech_executor import SpeechError, SpeechExecutor
 class AskRequest(BaseModel):
     text: str = Field(min_length=1, max_length=MAX_USER_INPUT_CHARS)
     speak: bool = True
+    voice_profile: str = Field(default="auto", pattern=r"^(auto|masculine|feminine)$")
 
 
 class PreviewCueRequest(BaseModel):
@@ -40,6 +41,7 @@ class SelectHeaRequest(BaseModel):
 class TurnJob:
     question: str
     speak: bool
+    voice_profile: str = "auto"
     creator_id: str = HEA_CREATOR_ID
     hea_id: str = HEA_ID
     visitor_id: str = ""
@@ -127,6 +129,7 @@ class HeaReachyMini(ReachyMiniApp):
                         TurnJob(
                             question=question,
                             speak=request.speak,
+                            voice_profile=request.voice_profile,
                             creator_id=selection.creator_id,
                             hea_id=selection.hea_id,
                             visitor_id=self._visitor_id,
@@ -277,6 +280,7 @@ class HeaReachyMini(ReachyMiniApp):
                         combined_stop,
                         lambda: run_motion(speaking=True),
                         language=accepted.language,
+                        voice_profile=job.voice_profile,
                     )
                     speech_outcome = playback.speech_outcome
                     motion_outcome = playback.motion_outcome

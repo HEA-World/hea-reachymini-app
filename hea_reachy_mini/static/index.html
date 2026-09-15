@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Public HEAs × Reachy Mini Lite</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">STORE CANDIDATE · PUBLIC HEA DIRECTORY</div>
+      <h1>Public HEAs <span>×</span> Reachy Mini</h1>
+      <p class="intro">Choose a publicly listed HEA and ask by typing. Reachy speaks each completed sentence and uses at most one physically reviewed Pollen movement for every two sentences.</p>
+      <div class="release-row"><span>Local app <strong id="app-version">…</strong></span><button id="export-diagnostics" class="quiet" type="button">Export safe diagnostics</button></div>
+    </header>
+
+    <section class="status-bar" aria-label="System status">
+      <div><i id="robot-dot"></i><span>Robot</span><strong id="robot-status">Starting</strong></div>
+      <div><i id="hea-dot"></i><span>HEA</span><strong id="hea-status">Not checked</strong></div>
+      <div><i id="speech-dot"></i><span>Voice</span><strong id="speech-status">Not checked</strong></div>
+      <div><i id="app-dot"></i><span>App</span><strong id="app-status">Starting</strong></div>
+    </section>
+
+    <section class="card directory-card">
+      <div class="section-title"><h2>Choose a public HEA</h2><span id="directory-status">Loading directory…</span></div>
+      <div class="directory-controls">
+        <label for="hea-search">Search public directory</label>
+        <input id="hea-search" type="search" maxlength="120" placeholder="Search by HEA name" autocomplete="off">
+        <label for="hea-picker">Available HEAs</label>
+        <select id="hea-picker" disabled><option>Loading public HEAs…</option></select>
+        <button id="refresh-heas" class="secondary" type="button">Retry directory</button>
+      </div>
+      <div class="selected-hea" aria-live="polite">
+        <img id="selected-hea-avatar" alt="" referrerpolicy="no-referrer" hidden>
+        <div><span>Reachy is speaking as</span><strong id="selected-hea-name">Choose a public HEA</strong><small id="selected-hea-id">No public HEA selected</small></div>
+      </div>
+      <p class="safety">Only HEAs listed in HEA-World's read-only public directory can be selected. Changing HEAs starts a fresh conversation so context never crosses between agents.</p>
+    </section>
+
+    <section class="card ask-card">
+      <form id="ask-form">
+        <label for="question">Ask <span id="ask-hea-name">your selected HEA</span></label>
+        <textarea id="question" maxlength="6000" rows="4" required>What is HEA-World, in one friendly sentence?</textarea>
+        <label class="speech-toggle" for="speak-answer">
+          <input id="speak-answer" type="checkbox" checked>
+          Speak completed sentences through Reachy's speaker
+        </label>
+        <div class="actions">
+          <button id="ask" type="submit">Ask <span id="ask-button-hea-name">selected HEA</span></button>
+          <button id="stop" class="danger" type="button">Stop &amp; neutral</button>
+          <button id="resume" class="secondary" type="button" hidden>Resume</button>
+        </div>
+      </form>
+      <p class="safety">Reachy selects an installed Mac voice for each answer sentence's language. Stop cancels speech and the active official recording through the Reachy SDK, then returns the robot to neutral. If a matching local voice is unavailable, the visible answer and safe expression path continue.</p>
+    </section>
+
+    <section class="card" aria-live="polite">
+      <div class="section-title"><h2>Answer</h2><span id="request-id"></span></div>
+      <div id="answer" class="answer empty">The answer will appear here.</div>
+      <div id="error" class="error" hidden></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><h2>Sentences in this answer</h2><span>voice + emoji · max 1 safe move / 2 sentences</span></div>
+      <ul id="cues" class="cues"><li class="muted">No expression cue yet.</li></ul>
+      <p class="motion-label">Current supervised-lab movement allowlist</p>
+      <div id="motion-allowlist" class="move-key"><span>Loading local catalog…</span></div>
+    </section>
+
+    <section class="card lab-card">
+      <div class="section-title"><h2>Canonical 24-emoji lab</h2><span>local catalog · no AI call</span></div>
+      <p class="lab-copy">Select any cue to preview its emoji. Preview is visual-only unless you explicitly arm lab motion. Conversational cadence may reuse one of the four reviewed movements as a disclosed safe proxy; it never unlocks the other 20 recordings.</p>
+      <label class="motion-arm" for="arm-motion">
+        <input id="arm-motion" type="checkbox">
+        Arm one supervised lab movement
+      </label>
+      <div id="cue-catalog" class="cue-catalog"><span class="muted">Loading canonical catalog…</span></div>
+    </section>
+
+    <footer>
+      <strong>AI disclosure:</strong> this interaction and its expression cues are generated by the selected public HEA. Typed text is sent to hea-world.com. Answer speech is synthesized locally on this Mac, played through Reachy's speaker, and deleted immediately. No microphone or camera is used.
+      <span class="diagnostics-note">Safe diagnostics contain operational status and outcomes only; review the JSON before sharing it with support.</span>
+    </footer>
+  </main>
+  <script src="/static/main.js"></script>
+</body>
+</html>

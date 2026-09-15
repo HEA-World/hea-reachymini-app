@@ -1,0 +1,2 @@
+reachy-mini==1.10.0
+requests==2.34.2

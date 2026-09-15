@@ -1,0 +1,11 @@
+data: {"type":"assistant_meta","msg_id":"assistant_123"}
+
+data: {"choices":[{"delta":{"content":"Hello "}}]}
+
+data: {"choices":[{"delta":{"content":"Reachy."}}]}
+
+data: {"type":"reachy_sentence_ready","msg_id":"assistant_123","request_id":"reachy_req_1","cue_set_version":"reachy_emoji","sentence_index":0,"text":"Hello Reachy.","cue_item":{"cue":"warm_smile","intensity":1,"timing":"during_sentence"}}
+
+data: {"type":"reachy_cue_plan","msg_id":"assistant_123","cue_set_version":"reachy_emoji","items":[]}
+
+data: {"type":"reachy_done","msg_id":"assistant_123","request_id":"reachy_req_1"}

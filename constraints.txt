@@ -1,0 +1,4 @@
+# Reproducible direct runtime set tested with Reachy Mini Control 0.9.34.
+# pyproject.toml contains the same exact install pins.
+reachy-mini==1.10.0
+requests==2.34.2

@@ -1,0 +1,365 @@
+{
+  "schema_version": 2,
+  "catalog_revision": "2026-09-15.1",
+  "dataset": {
+    "repo_id": "pollen-robotics/reachy-mini-emotions-library",
+    "revision": "873ae49f0b89114b7e535eff0c1f7560d21d9357",
+    "official_emotion_moves": [
+      "amazed1",
+      "anxiety1",
+      "attentive1",
+      "attentive2",
+      "boredom1",
+      "boredom2",
+      "calming1",
+      "cheerful1",
+      "come1",
+      "confused1",
+      "contempt1",
+      "curious1",
+      "dance1",
+      "dance2",
+      "dance3",
+      "disgusted1",
+      "displeased1",
+      "displeased2",
+      "downcast1",
+      "dying1",
+      "electric1",
+      "enthusiastic1",
+      "enthusiastic2",
+      "exhausted1",
+      "fear1",
+      "frustrated1",
+      "furious1",
+      "go_away1",
+      "grateful1",
+      "helpful1",
+      "helpful2",
+      "impatient1",
+      "impatient2",
+      "incomprehensible2",
+      "indifferent1",
+      "inquiring1",
+      "inquiring2",
+      "inquiring3",
+      "irritated1",
+      "irritated2",
+      "laughing1",
+      "laughing2",
+      "lonely1",
+      "lost1",
+      "loving1",
+      "no1",
+      "no_excited1",
+      "no_sad1",
+      "oops1",
+      "oops2",
+      "proud1",
+      "proud2",
+      "proud3",
+      "rage1",
+      "relief1",
+      "relief2",
+      "reprimand1",
+      "reprimand2",
+      "reprimand3",
+      "resigned1",
+      "sad1",
+      "sad2",
+      "scared1",
+      "serenity1",
+      "shy1",
+      "sleep1",
+      "success1",
+      "success2",
+      "surprised1",
+      "surprised2",
+      "thoughtful1",
+      "thoughtful2",
+      "tired1",
+      "uncertain1",
+      "uncomfortable1",
+      "understanding1",
+      "understanding2",
+      "welcoming1",
+      "welcoming2",
+      "yes1",
+      "yes_sad1"
+    ],
+    "utility_system_moves": [
+      "mini-deep-sleep",
+      "toc-toc-toc",
+      "waiting",
+      "wake-mini-up"
+    ]
+  },
+  "canonical_cue_catalog": {
+    "id": "reachy_emoji",
+    "status": "preview",
+    "cues": [
+      "warm_smile",
+      "thinking",
+      "agree",
+      "celebrate",
+      "explain",
+      "listen",
+      "caution",
+      "goodbye",
+      "amazed",
+      "curious",
+      "confused",
+      "uncertain",
+      "laugh",
+      "grateful",
+      "helpful",
+      "proud",
+      "relieved",
+      "sad",
+      "concerned",
+      "frustrated",
+      "disagree",
+      "oops",
+      "calm",
+      "invite"
+    ]
+  },
+  "legacy_cue_set_aliases": {
+    "reachy_emoji_v1": {
+      "status": "legacy",
+      "cues": [
+        "warm_smile",
+        "thinking",
+        "agree",
+        "celebrate",
+        "explain",
+        "listen",
+        "caution",
+        "goodbye"
+      ]
+    },
+    "reachy_emoji_v2": {
+      "status": "legacy",
+      "cues": [
+        "warm_smile",
+        "thinking",
+        "agree",
+        "celebrate",
+        "explain",
+        "listen",
+        "caution",
+        "goodbye",
+        "amazed",
+        "curious",
+        "confused",
+        "uncertain",
+        "laugh",
+        "grateful",
+        "helpful",
+        "proud",
+        "relieved",
+        "sad",
+        "concerned",
+        "frustrated",
+        "disagree",
+        "oops",
+        "calm",
+        "invite"
+      ]
+    }
+  },
+  "cues": [
+    {
+      "cue": "warm_smile",
+      "emoji": "😊",
+      "description": "Greeting, welcome, or explicit warm acknowledgement; not generic friendliness, gratitude, explanation, invitation, or farewell.",
+      "official_move": "welcoming2",
+      "motion_enabled": true,
+      "physical_review": "lab_only"
+    },
+    {
+      "cue": "thinking",
+      "emoji": "🤔",
+      "description": "Short reflective beat before or during a thoughtful answer.",
+      "official_move": "thoughtful2",
+      "motion_enabled": true,
+      "physical_review": "lab_only"
+    },
+    {
+      "cue": "agree",
+      "emoji": "✅",
+      "description": "Confirmation, completion, or clear yes-style acknowledgement.",
+      "official_move": "understanding2",
+      "motion_enabled": true,
+      "physical_review": "lab_only"
+    },
+    {
+      "cue": "celebrate",
+      "emoji": "🎉",
+      "description": "Small upbeat moment for success or delight.",
+      "official_move": "success2",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "explain",
+      "emoji": "💡",
+      "description": "Helpful explanation, idea, or concept introduction.",
+      "official_move": "thoughtful1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "listen",
+      "emoji": "👂",
+      "description": "Active listening or invite for the visitor to continue.",
+      "official_move": "attentive1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "caution",
+      "emoji": "⚠️",
+      "description": "Careful, bounded, or safety-aware response.",
+      "official_move": "calming1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "goodbye",
+      "emoji": "👋",
+      "description": "Goodbye, handoff, or closing moment.",
+      "official_move": "loving1",
+      "motion_enabled": true,
+      "physical_review": "lab_only"
+    },
+    {
+      "cue": "amazed",
+      "emoji": "🤩",
+      "description": "Positive amazement at something extraordinary or impressive.",
+      "official_move": "amazed1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "curious",
+      "emoji": "🧐",
+      "description": "Curiosity or interest in learning more.",
+      "official_move": "curious1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "confused",
+      "emoji": "😕",
+      "description": "The answer or situation is not yet understood.",
+      "official_move": "confused1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "uncertain",
+      "emoji": "🤷",
+      "description": "Uncertainty or a deliberately qualified answer.",
+      "official_move": "uncertain1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "laugh",
+      "emoji": "😄",
+      "description": "Light laughter in a genuinely funny moment.",
+      "official_move": "laughing2",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "grateful",
+      "emoji": "🙏",
+      "description": "Gratitude for help, a compliment, or a kind gesture.",
+      "official_move": "grateful1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "helpful",
+      "emoji": "🤝",
+      "description": "Readiness and pleasure in helping or contributing.",
+      "official_move": "helpful1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "proud",
+      "emoji": "😌",
+      "description": "Quiet satisfaction with a result or accomplishment.",
+      "official_move": "proud2",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "relieved",
+      "emoji": "😮‍💨",
+      "description": "Relief after a difficult or uncertain situation is resolved.",
+      "official_move": "relief1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "sad",
+      "emoji": "😔",
+      "description": "Gentle sadness or empathy for a disappointing situation.",
+      "official_move": "sad1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "concerned",
+      "emoji": "😟",
+      "description": "Concern or worry that calls for a careful response.",
+      "official_move": "anxiety1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "frustrated",
+      "emoji": "😣",
+      "description": "Mild frustration when a task or solution is blocked.",
+      "official_move": "frustrated1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "disagree",
+      "emoji": "🙅",
+      "description": "A clear but respectful negative response or disagreement.",
+      "official_move": "no1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "oops",
+      "emoji": "😅",
+      "description": "Acknowledgement of a small mistake or correction.",
+      "official_move": "oops1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "calm",
+      "emoji": "🧘",
+      "description": "A calm, reassuring, and composed conversational beat.",
+      "official_move": "serenity1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    },
+    {
+      "cue": "invite",
+      "emoji": "🤗",
+      "description": "A friendly invitation to continue or come closer.",
+      "official_move": "come1",
+      "motion_enabled": false,
+      "physical_review": "pending"
+    }
+  ]
+}

@@ -1,198 +1,99 @@
-<!--
-HEA-World Reachy Mini App Prototype
-Copyright (c) 2026 HEA-World contributors
-SPDX-License-Identifier: MIT
-This file is intended to be extracted into a separate open-source repository.
--->
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HEA Reachy Mini</title>
-    <link rel="stylesheet" href="./styles.css">
-  </head>
-  <body>
-    <main class="app-shell" aria-labelledby="app-title">
-      <section class="workspace">
-        <header class="hero">
-          <div class="hero-nav">
-            <a class="brand-link" href="https://hea-world.com/" aria-label="Open HEA-World home page">
-              <span class="brand-mark">HEA</span>
-              <span>HEA-World</span>
-            </a>
-            <div class="status-strip" aria-live="polite">
-              <span id="connection-status" class="status-dot" data-state="idle"></span>
-              <span id="connection-label">Mock ready</span>
-            </div>
-          </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Choose a public HEA, ask by typing, and let Reachy Mini Lite speak with safe official Pollen movements.">
+  <title>Public HEAs for Reachy Mini Lite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">HEA-WORLD × REACHY MINI</p>
+        <div class="badge">Public beta RC · app 0.6.0</div>
+        <h1>Give any public HEA a friendly physical presence.</h1>
+        <p class="lede">Choose a publicly listed HEA, type a question, and hear its grounded answer through Reachy Mini Lite—with multilingual local speech, canonical emoji, and only physically allowlisted Pollen movements.</p>
+        <p class="release-status"><strong>Release status:</strong> prepared for direct public RC publication. Clean catalog installation and owner physical validation are still required before stable release.</p>
+      </div>
+      <figure class="hero-media">
+        <img src="https://hea-world.com/images/reachymini.png" alt="White Reachy Mini Lite robot on a table" referrerpolicy="no-referrer">
+        <figcaption>Reachy Mini Lite · typed public-HEA beta</figcaption>
+      </figure>
+    </section>
 
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <p class="eyebrow">Reachy Mini Channel Prototype</p>
-              <h1 id="app-title">Give your HEA a physical presence 🤖</h1>
-              <p class="hero-lede">One HEA. Multiple channels.</p>
-              <p class="hero-sublede">Grounded AI + safe local robot behaviors.</p>
+    <section class="panel">
+      <p class="eyebrow">HOW IT WORKS</p>
+      <h2>Four simple steps</h2>
+      <ol class="steps">
+        <li><span>1</span><div><strong>Connect Reachy</strong><p>Connect Reachy Mini Lite over USB and start it in Reachy Mini Control.</p></div></li>
+        <li><span>2</span><div><strong>Install and open</strong><p>After release, install this Python app from the Reachy application catalog and open its local control panel.</p></div></li>
+        <li><span>3</span><div><strong>Choose a public HEA</strong><p>Search the read-only HEA-World directory. Changing HEAs starts a fresh conversation.</p></div></li>
+        <li><span>4</span><div><strong>Type, hear, and see</strong><p>Reachy speaks each completed sentence in a matching installed Mac voice and adds safely gated expression.</p></div></li>
+      </ol>
+    </section>
 
-              <ol class="flow-steps" aria-label="Prototype flow">
-                <li><span>1</span>Connect Reachy</li>
-                <li><span>2</span>Ask your HEA</li>
-                <li><span>3</span>Watch the robot react</li>
-              </ol>
-            </div>
+    <section class="grid">
+      <article class="panel">
+        <p class="eyebrow">REQUIREMENTS</p>
+        <h2>Tested setup</h2>
+        <ul>
+          <li>Reachy Mini Lite connected over USB</li>
+          <li>Apple-silicon Mac and Reachy Mini Control 0.9.34</li>
+          <li>Python 3.12.14 and Reachy SDK/daemon 1.10.0</li>
+          <li>Internet for the public HEA directory and HEA answers</li>
+          <li>Installed macOS voices for multilingual offline speech</li>
+        </ul>
+      </article>
 
-            <section class="robot-showcase" aria-labelledby="robot-title">
-              <div class="section-heading">
-                <p class="section-kicker">Live preview</p>
-                <h2 id="robot-title">Robot presence</h2>
-              </div>
+      <article class="panel safety-panel">
+        <p class="eyebrow">SAFETY</p>
+        <h2>Motion stays local</h2>
+        <ul>
+          <li>Network data never becomes poses, joints, filenames, or motor commands.</li>
+          <li>Twenty-four emoji are visual; only four reviewed motion families can move.</li>
+          <li>Movement is capped at one per two sentences and recording sound stays off.</li>
+          <li><strong>Stop &amp; neutral</strong> cancels speech and motion, then attempts a neutral pose.</li>
+        </ul>
+      </article>
+    </section>
 
-              <div class="video-frame">
-                <video id="reachy-video" autoplay muted playsinline></video>
-                <div id="mock-stage" class="mock-stage" aria-live="polite">
-                  <div id="mock-robot" class="mock-robot" data-cue="idle" aria-hidden="true">
-                    <span class="mock-antenna mock-antenna-left"></span>
-                    <span class="mock-antenna mock-antenna-right"></span>
-                    <div class="mock-head">
-                      <span class="mock-eye mock-eye-left"><span></span></span>
-                      <span class="mock-eye mock-eye-right"><span></span></span>
-                      <span class="mock-mouth"></span>
-                    </div>
-                    <span class="mock-neck"></span>
-                  </div>
-                  <div class="preview-status">
-                    <p id="preview-cue">Idle expression preview</p>
-                    <p id="mock-pose">Head 0 / 0 / 0 - Antennas 0 / 0 - Body 0</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </header>
+    <section class="panel privacy">
+      <div>
+        <p class="eyebrow">AI &amp; PRIVACY</p>
+        <h2>Know what leaves the Mac</h2>
+      </div>
+      <div>
+        <p>Typed questions and the selected public HEA identity are sent to <code>https://hea-world.com/api/reachymini/chat</code>. The selected AI-powered HEA generates the answer and expression cues.</p>
+        <p>Speech is synthesized locally with macOS, played through Reachy's speaker, and deleted immediately. The app does not use the microphone or camera and stores no credential. A deliberate diagnostics export excludes conversation text, audio, visitor/session identifiers, and raw exceptions.</p>
+      </div>
+    </section>
 
-        <div class="control-grid">
-          <section class="panel panel-robot" aria-labelledby="connect-title">
-            <div class="section-heading">
-              <p class="section-kicker">Step 1</p>
-              <h2 id="connect-title">Connect Reachy</h2>
-            </div>
+    <section class="grid">
+      <article class="panel">
+        <p class="eyebrow">KNOWN BETA LIMITS</p>
+        <h2>Current boundary</h2>
+        <ul>
+          <li>Only public directory-listed HEAs; no private, shared, draft, or unlisted access</li>
+          <li>No voice input, camera behavior, unattended operation, or wireless support claim</li>
+          <li>Only four official Pollen movement families have entered the supervised allowlist</li>
+          <li>Natural pronunciation depends on a matching installed macOS voice</li>
+        </ul>
+      </article>
 
-            <div class="split">
-              <label>
-                <span>Robot mode</span>
-                <select id="robot-mode">
-                  <option value="mock">Mock robot</option>
-                  <option value="reachy">Reachy SDK</option>
-                </select>
-              </label>
-              <label>
-                <span>Behavior profile</span>
-                <select id="behavior-profile">
-                  <option value="default">Default</option>
-                  <option value="calm">Calm</option>
-                  <option value="showroom">Showroom</option>
-                  <option value="reduced_motion">Reduced motion</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="button-row">
-              <button id="connect-button" type="button">Connect Reachy</button>
-              <button id="stop-button" class="secondary" type="button">Safe stop</button>
-            </div>
-          </section>
-
-          <section class="panel panel-config" aria-labelledby="config-title">
-            <div class="section-heading">
-              <p class="section-kicker">HEA identity</p>
-              <h2 id="config-title">Ask HEAGuide by default</h2>
-            </div>
-
-            <label class="toggle-row">
-              <input id="mock-api" type="checkbox" checked>
-              <span>Use mock HEA answer</span>
-            </label>
-
-            <div class="split">
-              <label>
-                <span>Creator ID</span>
-                <input id="creator-id" type="text" value="hea-world" placeholder="creator id" autocomplete="off">
-              </label>
-              <label>
-                <span>HEA ID</span>
-                <input id="hea-id" type="text" value="heaguide-web-001" placeholder="hea id" autocomplete="off">
-              </label>
-            </div>
-          </section>
-
-          <section class="panel panel-chat" aria-labelledby="chat-title">
-            <div class="section-heading">
-              <p class="section-kicker">Step 2</p>
-              <h2 id="chat-title">Ask your HEA</h2>
-            </div>
-
-            <div class="prompt-buttons" aria-label="Example prompts">
-              <button class="prompt-chip" type="button" data-prompt="Introduce HEA-World in a warm and simple way.">Introduce HEA-World</button>
-              <button class="prompt-chip" type="button" data-prompt="Welcome a visitor to the HEA-World booth and explain what they can try.">Welcome a visitor</button>
-              <button class="prompt-chip" type="button" data-prompt="Explain solar energy simply for someone visiting a demo booth.">Explain solar energy simply</button>
-            </div>
-
-            <form id="chat-form">
-              <label>
-                <span>Visitor says</span>
-                <textarea id="user-text" rows="5" required>Can you explain what HEA-World does in a friendly way?</textarea>
-              </label>
-              <button id="ask-button" type="submit">Ask HEA</button>
-            </form>
-            <div id="answer" class="answer" aria-live="polite"></div>
-          </section>
-
-          <section class="panel panel-cues" aria-labelledby="cues-title">
-            <div class="section-heading">
-              <p class="section-kicker">Step 3</p>
-              <h2 id="cues-title">Embodied Reactions</h2>
-            </div>
-            <ol id="cue-list" class="cue-list"></ol>
-          </section>
-
-          <details class="panel advanced-panel">
-            <summary>Advanced settings</summary>
-            <div class="advanced-grid">
-              <label>
-                <span>HEA endpoint</span>
-                <input id="endpoint" type="text" value="/api/reachymini/chat" autocomplete="off">
-              </label>
-              <label>
-                <span>Install ID</span>
-                <input id="install-id" type="text" placeholder="install_..." autocomplete="off">
-              </label>
-              <label>
-                <span>Visitor ID</span>
-                <input id="visitor-id" type="text" autocomplete="off">
-              </label>
-              <label>
-                <span>Session ID</span>
-                <input id="session-id" type="text" autocomplete="off">
-              </label>
-              <label>
-                <span>Reachy SDK module</span>
-                <input id="sdk-module-url" type="url" autocomplete="off">
-              </label>
-              <label>
-                <span>Robot ID</span>
-                <input id="robot-id" type="text" placeholder="auto-select first robot" autocomplete="off">
-              </label>
-            </div>
-          </details>
-
-          <details class="panel panel-log">
-            <summary>Developer console</summary>
-            <ol id="event-log" class="event-log"></ol>
-          </details>
-        </div>
-      </section>
-    </main>
-
-    <script type="module" src="./src/main.js"></script>
-  </body>
+      <article class="panel links">
+        <p class="eyebrow">SOURCE &amp; SUPPORT</p>
+        <h2>Built for review</h2>
+        <a href="https://hea-world.com/hea_pages/hea_reachymini.html">HEA-World Reachy Mini overview</a>
+        <a href="https://hea-world.com/hea_pages/hea_contact.html">HEA-World support</a>
+        <a href="https://github.com/HEA-World/hea-reachymini-app">Canonical source on GitHub</a>
+        <a href="https://huggingface.co/spaces/HEA-World/hea-reachymini-app">Reachy app on Hugging Face</a>
+        <a href="https://huggingface.co/docs/reachy_mini/SDK/apps">Official Reachy Mini app documentation</a>
+        <a href="https://github.com/pollen-robotics/reachy_mini">Reachy Mini SDK source</a>
+        <p class="license">HEA-World app source: MIT. Reachy SDK and official emotion recordings: Apache-2.0. See bundled third-party notices.</p>
+      </article>
+    </section>
+  </main>
+</body>
 </html>

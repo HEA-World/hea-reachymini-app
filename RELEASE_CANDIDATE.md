@@ -1,6 +1,6 @@
 # Store release candidate record
 
-status: Phase 4 public-RC published to GitHub; Hugging Face sync and physical validation pending
+status: Phase 4 public RC live on Hugging Face; catalog installation and owner physical validation pending
 last_updated: 2026-09-15
 app_version: 0.6.0
 target_source: `https://github.com/HEA-World/hea-reachymini-app`
@@ -15,6 +15,12 @@ release_tag: `v0.6.0-rc.1`
 - Hygiene issue found during audit: generated `build/`, `*.egg-info`, and `__pycache__` files had been staged by the release checkout.
 - Repair: publish a normal follow-up commit that shortens the metadata, removes generated files, and expands `.gitignore`; do not rewrite public history.
 - Space remained on baseline `df9bfb88bf21bca8c0977f907b9f4880c4c4bf4c` after the failed run.
+- Corrective GitHub commit: `282b2c18bb1f6c25f9fc467f9fc1ba408b6609c6`
+- Successful GitHub sync run: `34975420483`
+- Synchronized Space commit: `d7a8a82c1e58391c4ba08f019b092323b936ecde`
+- Payload verification: all 38 Space application files match the reviewed manifest byte-for-byte; hub-sync omits GitHub `.gitignore` and supplies Space `.gitattributes`.
+- Official checker against the synchronized Space clone: metadata, clean temporary install, entry-point registration, uninstall — PASS.
+- Still open: installation from Reachy Mini Control's public catalog and owner physical E6.
 
 ## Existing canonical release baseline
 

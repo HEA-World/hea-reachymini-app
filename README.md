@@ -14,13 +14,13 @@ tags:
 
 # Public HEAs for Reachy Mini Lite
 
-Store Package S public beta release candidate (app 0.6.1): choose a publicly listed HEA,
+Store Package S public beta release candidate (app 0.6.2): choose a publicly listed HEA,
 type a question, stream that HEA's normal answer, speak each completed sentence through Reachy's speaker,
 show its expression cues as emoji, and translate only physically allowlisted
 cues into recordings from Pollen Robotics' official Reachy Mini emotions
 library.
 
-This source prepares the public `v0.6.1-rc.2` release candidate. A clean
+This source prepares the public `v0.6.2-rc.1` release candidate. A clean
 install from the synchronized public Space and owner physical release-candidate
 test remain required before the app is promoted as a stable release.
 
@@ -31,6 +31,7 @@ test remain required before the app is promoted as a stable release.
 - keeps HEA World (`hea-world/heaguide-web-001`) selected by default when that exact identity is present in the public directory, exposes no free-form identity fields, and sends the exact selected public `creator_id` + `hea_id` to `https://hea-world.com/api/reachymini/chat`;
 - starts every selected HEA with the neutral question `What do you do?`;
 - renders the current browser session as a local chat transcript and keeps sentence-level speech/expression/motion outcomes in a separate **Last answer details** audit; the transcript is not persisted or sent anywhere as a second data flow;
+- assigns each submitted turn a monotonic local turn id, so the new pending assistant bubble ignores the previous completed server snapshot and is updated in place throughout streaming instead of duplicating the answer;
 - blocks switching during an active answer and creates fresh visitor/session identities after a real HEA change so conversation context cannot cross agents;
 - disables Ask and offers an explicit retry when the public directory is unavailable or invalid; a vanished selection is cleared instead of silently falling back to another HEA;
 - uses one catalog-driven, 24-cue `reachy_emoji` contract; old v1/v2 ids are accepted only for installed-client compatibility;
@@ -54,7 +55,7 @@ test remain required before the app is promoted as a stable release.
 - shows app version plus answering, speaking, moving, stopped, and recoverable-error states in the local operator UI;
 - writes only allowlisted JSON log metadata and offers an explicit safe-diagnostics export that excludes questions, answers, sentence text, audio, visitor/session ids, avatar URLs, and raw exceptions.
 
-App 0.6.1 requests the canonical `reachy_emoji` contract. The production
+App 0.6.2 requests the canonical `reachy_emoji` contract. The production
 backend still accepts hidden `reachy_emoji_v1` and `reachy_emoji_v2` aliases for
 already-installed clients.
 
@@ -84,6 +85,7 @@ Use the Python bundled with Reachy Mini Control on this development Mac:
 
 ```bash
 python -m unittest discover -s tests -v
+node --test tests/chat_turn_state.test.js
 reachy-mini-app-assistant check /absolute/path/to/hea_reachy_mini
 ```
 
@@ -97,7 +99,7 @@ to neutral. Reachy Mini Control also returns the robot to its default pose after
 the app exits.
 
 Spoken output is on by default and can be disabled for any turn in the local
-UI. Version 0.6.1 supports speech only on the physically tested Apple-silicon
+UI. Version 0.6.2 supports speech only on the physically tested Apple-silicon
 macOS/Lite setup. It validates sentence-level language metadata, checks the
 actual sentence locally, and selects a matching installed macOS voice at 185 words/minute,
 with a 15-second sentence cap, 45-second turn cap, 2 MB file cap, and no saved
@@ -130,7 +132,7 @@ must be reviewed before it is shared.
 
 ## Installation, removal, and support
 
-After `v0.6.1-rc.2` is pushed to the public GitHub source repository and
+After `v0.6.2-rc.1` is pushed to the public GitHub source repository and
 `hub-sync` updates the public Hugging Face Space, Phase 4 must install this
 package through Reachy Mini Control and prove update, uninstall, and reinstall
 without relying on the editable development install. Public RC availability is
@@ -154,6 +156,6 @@ mirrored in `constraints.txt`.
 - Twenty-four semantic cues are catalogued; only four official movements are currently enabled for supervised physical validation.
 - Conversational cadence reuses only those four reviewed movements as disclosed semantic families; it does not execute any of the other 20 candidate recordings.
 - The tested bundled SDK/daemon is 1.10.0; movement sound is deliberately disabled.
-- The public 0.6.0 RC is live; this 0.6.1 refinement still requires GitHub-to-Hugging-Face synchronization and a clean Reachy Mini Control update before its behavior is treated as released.
+- Public app 0.6.1 is live; the 0.6.2 chat-deduplication hotfix still requires GitHub-to-Hugging-Face synchronization and a clean Reachy Mini Control update before its behavior is treated as released.
 - The first HEAGuide physical turn passed answer/emoji/cooldown, but IK warnings keep motion approval open.
-- Owner E6 confirms robot-speaker output, natural French/Dutch/English pronunciation, and cadence-2 movement along sentences. App 0.6.1 retains the language-continuity correction and adds matching-language voice-character preference plus local chat presentation. Two-public-HEA selection/context isolation, Stop/neutral, 0.6.1 public update/install/uninstall, voice-character quality, voice input, and stable-release E6 remain open.
+- Owner E6 confirms robot-speaker output, natural French/Dutch/English pronunciation, and cadence-2 movement along sentences. App 0.6.2 retains the language-continuity and voice-character behavior while preventing a previous answer snapshot from occupying a newly submitted chat bubble. Two-public-HEA selection/context isolation, Stop/neutral, 0.6.2 public update/install/uninstall, voice-character quality, voice input, and stable-release E6 remain open.

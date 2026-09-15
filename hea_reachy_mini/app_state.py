@@ -50,6 +50,7 @@ class AppStateStore:
             "status": "starting",
             "busy": False,
             "stopped": False,
+            "turn_id": 0,
             "answer": "",
             "cues": [],
             "cue_catalog": cue_catalog,
@@ -205,19 +206,21 @@ class AppStateStore:
             if ready and not self._state["busy"] and not self._state["stopped"]:
                 self._state["status"] = "ready"
 
-    def try_queue_turn(self) -> bool:
+    def try_queue_turn(self) -> int | None:
         with self._lock:
             if self._state["busy"] or self._state["stopped"] or not self._state["robot_ready"]:
-                return False
+                return None
+            turn_id = int(self._state["turn_id"]) + 1
             self._state.update(
                 busy=True,
                 status="queued",
+                turn_id=turn_id,
                 answer="",
                 cues=[],
                 error=None,
                 request_id=None,
             )
-            return True
+            return turn_id
 
     def try_queue_preview(self) -> bool:
         with self._lock:

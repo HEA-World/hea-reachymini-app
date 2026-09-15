@@ -2,7 +2,7 @@
 
 from .expression_catalog import CANONICAL_CUE_CATALOG_ID
 
-APP_VERSION = "0.6.1"
+APP_VERSION = "0.6.2"
 HEA_ENDPOINT = "https://hea-world.com/api/reachymini/chat"
 HEA_DIRECTORY_URL = "https://cdn.hea-world.com/heas/prod/hea_directory.json"
 HEA_CREATOR_ID = "hea-world"

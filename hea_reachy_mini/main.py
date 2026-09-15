@@ -113,7 +113,8 @@ class HeaReachyMini(ReachyMiniApp):
                 selection = self._selected_hea
                 if selection is None or selection.key not in self._directory_entries:
                     raise HTTPException(status_code=409, detail="Choose a public HEA before asking")
-                if not self.state.try_queue_turn():
+                turn_id = self.state.try_queue_turn()
+                if turn_id is None:
                     snapshot = self.state.snapshot()
                     if snapshot["stopped"]:
                         raise HTTPException(status_code=409, detail="Resume the app before asking")
@@ -139,7 +140,7 @@ class HeaReachyMini(ReachyMiniApp):
                 except queue.Full as error:
                     self.state.fail(code="turn_queue_full", message="A HEA turn is already queued", request_id=None)
                     raise HTTPException(status_code=409, detail="A HEA turn is already queued") from error
-            return {"accepted": True}
+            return {"accepted": True, "turn_id": turn_id}
 
         @self.settings_app.post("/stop")
         def stop() -> dict:

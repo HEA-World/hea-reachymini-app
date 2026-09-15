@@ -33,6 +33,19 @@ class LocalPreviewTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             PreviewCueRequest(cue="welcoming2!")
 
+    def test_each_queued_turn_gets_a_new_local_turn_id_and_clears_the_prior_answer(self):
+        state = AppStateStore()
+        state.set_robot_ready(True)
+
+        first_turn_id = state.try_queue_turn()
+        state.complete(answer="Previous answer", request_id="req-1")
+        second_turn_id = state.try_queue_turn()
+
+        self.assertEqual(first_turn_id, 1)
+        self.assertEqual(second_turn_id, 2)
+        self.assertEqual(state.snapshot()["turn_id"], 2)
+        self.assertEqual(state.snapshot()["answer"], "")
+
     def test_visual_preview_never_calls_motion_executor(self):
         app = self.make_app()
         selection = CueGate().select_local_preview("grateful", "local-1")

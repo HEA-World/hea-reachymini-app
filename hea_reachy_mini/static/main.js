@@ -38,7 +38,6 @@ let directoryItems = [];
 let directoryState = "not_loaded";
 let latestState = null;
 let activeChatTurn = null;
-let lastObservedAnswer = "";
 let lastSelectedHeaKey = "";
 
 const labels = {
@@ -367,10 +366,9 @@ function beginChatTurn(text) {
   const assistantBubble = chatBubble("assistant", latestState?.selected_hea?.name || "HEA", "Thinking…");
   assistantBubble.querySelector(".chat-message").classList.add("pending");
   ui.chatTranscript.append(userBubble, assistantBubble);
-  activeChatTurn = assistantBubble;
-  lastObservedAnswer = "";
+  activeChatTurn = window.HEAChatTurnState.begin(assistantBubble, latestState?.turn_id);
   ui.chatTranscript.scrollTop = ui.chatTranscript.scrollHeight;
-  return assistantBubble;
+  return activeChatTurn;
 }
 
 function chatBubble(role, speaker, text) {
@@ -391,36 +389,34 @@ function chatBubble(role, speaker, text) {
 
 function markChatTurnFailed(turn) {
   if (!turn) return;
-  const message = turn.querySelector(".chat-message");
+  const message = turn.bubble.querySelector(".chat-message");
   message.classList.remove("pending");
   message.textContent = "This message could not be sent.";
-  activeChatTurn = null;
+  if (activeChatTurn === turn) activeChatTurn = null;
 }
 
 function renderChatState(state) {
+  const turn = activeChatTurn;
+  if (!turn || !window.HEAChatTurnState.ownsState(turn, state)) return;
+
   const answer = String(state.answer || "");
-  if (activeChatTurn) {
-    const message = activeChatTurn.querySelector(".chat-message");
-    if (answer) {
-      message.textContent = answer;
-      message.classList.remove("pending");
-    } else if (state.status === "stopped") {
-      message.textContent = "Stopped.";
-      message.classList.remove("pending");
-    } else if (state.status === "error") {
-      message.textContent = "The HEA could not complete this answer.";
-      message.classList.remove("pending");
-    }
-    if (!state.busy && ["complete", "error", "stopped"].includes(state.status)) {
-      activeChatTurn = null;
-    }
-  } else if (answer && answer !== lastObservedAnswer) {
-    ui.chatTranscript.querySelector(".chat-empty")?.remove();
-    ui.chatTranscript.append(chatBubble("assistant", state.selected_hea?.name || "HEA", answer));
+  const message = turn.bubble.querySelector(".chat-message");
+  if (answer) {
+    message.textContent = answer;
+    message.classList.remove("pending");
+  } else if (state.status === "stopped") {
+    message.textContent = "Stopped.";
+    message.classList.remove("pending");
+  } else if (state.status === "error") {
+    message.textContent = "The HEA could not complete this answer.";
+    message.classList.remove("pending");
   }
-  if (answer !== lastObservedAnswer) {
-    lastObservedAnswer = answer;
+  if (answer !== turn.lastAnswer) {
+    turn.lastAnswer = answer;
     ui.chatTranscript.scrollTop = ui.chatTranscript.scrollHeight;
+  }
+  if (!state.busy && ["complete", "error", "stopped"].includes(state.status)) {
+    activeChatTurn = null;
   }
 }
 
@@ -431,7 +427,6 @@ function resetChat() {
   empty.textContent = "Start a fresh conversation with this HEA.";
   ui.chatTranscript.append(empty);
   activeChatTurn = null;
-  lastObservedAnswer = "";
 }
 
 function renderCueCatalog(state) {

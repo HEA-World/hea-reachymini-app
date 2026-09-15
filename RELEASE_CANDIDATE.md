@@ -1,11 +1,11 @@
 # Store release candidate record
 
-status: app 0.6.1 RC refinement staged locally; public 0.6.0 RC remains live; catalog update and owner physical validation pending
+status: app 0.6.2 chat-deduplication hotfix staged locally; public 0.6.1 RC remains the rollback; owner physical validation pending
 last_updated: 2026-09-15
-app_version: 0.6.1
+app_version: 0.6.2
 target_source: `https://github.com/HEA-World/hea-reachymini-app`
 target_space: `https://huggingface.co/spaces/HEA-World/hea-reachymini-app`
-release_tag: `v0.6.1-rc.2`
+release_tag: `v0.6.2-rc.1`
 
 ## Public release attempt
 
@@ -21,7 +21,10 @@ release_tag: `v0.6.1-rc.2`
 - Payload verification: all 38 Space application files match the reviewed manifest byte-for-byte; hub-sync omits GitHub `.gitignore` and supplies Space `.gitattributes`.
 - Official checker against the synchronized Space clone: metadata, clean temporary install, entry-point registration, uninstall — PASS.
 - Still open: installation from Reachy Mini Control's public catalog and owner physical E6.
-- Follow-up RC source: app 0.6.1 adds a browser-memory chat transcript, separate last-answer audit, HEA-neutral starter, conditional HEA World preference, and installed matching-language Automatic/Masculine/Feminine voice selection. It is not public until a separately verified GitHub commit and successful `hub-sync` replace the 0.6.0 RC.
+- App 0.6.1 publication: GitHub `d6e6490` synchronized to Hugging Face `24218fa`; the live `main.js` SHA-256 matches the public GitHub checkout.
+- App 0.6.2 hotfix: a monotonic local turn id binds the browser's pending assistant bubble to the newly queued turn, so the previous completed answer cannot occupy it during the pre-acknowledgement polling race. Unowned server snapshots never append transcript bubbles. Speech, motion, directory, and HEA backend behavior are unchanged.
+- Local hotfix evidence: 68 Python tests and 3 deterministic JavaScript turn-ownership tests pass; syntax checks pass for both browser scripts. The 41-file manifest, official clean-install check, public-repo mirror, and full repository gate remain required before push approval.
+- App 0.6.2 is not public until the exact staged diff is approved, the public checkout byte-matches the expanded manifest, and a successful `hub-sync` is verified.
 
 ## Existing canonical release baseline
 
@@ -67,7 +70,7 @@ physical soak. These are not inferred from Phase 3 source checks.
 
 ## Rollback
 
-The prior GitHub state is retained on `static-prototype-archive`; the Space
+App 0.6.1 is the immediate hotfix rollback. The earlier GitHub state is retained on `static-prototype-archive`; the Space
 baseline is recorded above. If the Python package fails install or launch,
 revert the public GitHub release commits, allow `hub-sync` to restore the Space
 payload, then verify the Space HEAD and reinstall the last locally validated

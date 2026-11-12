@@ -20,9 +20,9 @@ show its expression cues as emoji, and translate only physically allowlisted
 cues into recordings from Pollen Robotics' official Reachy Mini emotions
 library.
 
-This source prepares the public `v0.6.2-rc.1` release candidate. A clean
-install from the synchronized public Space and owner physical release-candidate
-test remain required before the app is promoted as a stable release.
+App 0.6.2 is live as a synchronized public beta on GitHub and Hugging Face. The
+matching `v0.6.2-rc.1` source tag, a clean catalog-installed owner test, and the
+remaining physical evidence are still required before stable promotion.
 
 ## What it does
 
@@ -132,11 +132,11 @@ must be reviewed before it is shared.
 
 ## Installation, removal, and support
 
-After `v0.6.2-rc.1` is pushed to the public GitHub source repository and
-`hub-sync` updates the public Hugging Face Space, Phase 4 must install this
-package through Reachy Mini Control and prove update, uninstall, and reinstall
-without relying on the editable development install. Public RC availability is
-not a claim that the physical release gate has passed.
+App 0.6.2 is synchronized from the public GitHub source repository to the
+public Hugging Face Space. Phase 4 must now install or update this package
+through Reachy Mini Control and prove one-turn/one-bubble behavior, uninstall,
+and reinstall without relying on the editable development install. Public beta
+availability is not a claim that the physical release gate has passed.
 
 To stop normal use, click **Stop & neutral**, then stop the app in Reachy Mini
 Control. To uninstall a released build, stop it and use the installed-app remove

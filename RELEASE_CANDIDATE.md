@@ -1,6 +1,6 @@
 # Store release candidate record
 
-status: app 0.6.2 chat-deduplication hotfix staged locally; public 0.6.1 RC remains the rollback; owner physical validation pending
+status: app 0.6.2 chat-deduplication hotfix live as a public beta; public 0.6.1 remains the rollback; owner physical validation pending
 last_updated: 2026-09-15
 app_version: 0.6.2
 target_source: `https://github.com/HEA-World/hea-reachymini-app`
@@ -23,8 +23,9 @@ release_tag: `v0.6.2-rc.1`
 - Still open: installation from Reachy Mini Control's public catalog and owner physical E6.
 - App 0.6.1 publication: GitHub `d6e6490` synchronized to Hugging Face `24218fa`; the live `main.js` SHA-256 matches the public GitHub checkout.
 - App 0.6.2 hotfix: a monotonic local turn id binds the browser's pending assistant bubble to the newly queued turn, so the previous completed answer cannot occupy it during the pre-acknowledgement polling race. Unowned server snapshots never append transcript bubbles. Speech, motion, directory, and HEA backend behavior are unchanged.
-- Local hotfix evidence: 68 Python tests and 3 deterministic JavaScript turn-ownership tests pass; syntax checks pass for both browser scripts. The 41-file manifest, official clean-install check, public-repo mirror, and full repository gate remain required before push approval.
-- App 0.6.2 is not public until the exact staged diff is approved, the public checkout byte-matches the expanded manifest, and a successful `hub-sync` is verified.
+- App 0.6.2 publication: GitHub `7397a37` synchronized to Hugging Face `cce99fd`; the live `main.js` and `chat_turn_state.js` SHA-256 digests match the canonical public checkout.
+- Hotfix evidence: 68 Python tests, 3 deterministic JavaScript turn-ownership tests, both browser-script syntax checks, the official clean-install check, the exact 41-file public-repo mirror, and the 63-check repository Layer B gate pass.
+- Still open for formal release completion: catalog-installed one-turn/one-bubble owner E6, remaining physical/soak evidence, and stable promotion. Public availability alone is not that approval.
 
 ## Existing canonical release baseline
 
